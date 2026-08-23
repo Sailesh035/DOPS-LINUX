@@ -16,20 +16,28 @@ jobs:
       - name: Checkout DOPS
         uses: actions/checkout@v4
 
-      - name: Install Arch build environment
+      - name: Build AUR package
         run: |
+          PACKAGE="${{ inputs.package }}"
+
+          if [ -z "$PACKAGE" ]; then
+            echo "ERROR: package name is empty"
+            exit 1
+          fi
+
+          echo "Building AUR package: $PACKAGE"
+
           docker pull archlinux:latest
 
-      - name: Build AUR package
-        env:
-          PACKAGE: ${{ inputs.package }}
-        run: |
           docker run --rm \
+            -e "PACKAGE=$PACKAGE" \
             -v "$PWD:/workspace" \
             -w /workspace \
             archlinux:latest \
             bash -c '
               set -e
+
+              echo "Package: $PACKAGE"
 
               pacman -Sy --noconfirm \
                 base-devel \
@@ -37,21 +45,39 @@ jobs:
                 sudo
 
               useradd -m builder
+
               printf "builder ALL=(ALL) NOPASSWD: ALL\n" \
                 > /etc/sudoers.d/builder
 
               chown -R builder:builder /workspace
 
               su - builder -c "
+                set -e
                 cd /workspace
-                git clone https://aur.archlinux.org/${PACKAGE}.git aur-package
+
+                rm -rf aur-package
+
+                git clone \
+                  https://aur.archlinux.org/${PACKAGE}.git \
+                  aur-package
+
                 cd aur-package
-                makepkg --syncdeps --noconfirm
+
+                echo
+                echo "=== PKGBUILD ==="
+                head -80 PKGBUILD
+                echo "================"
+
+                makepkg \
+                  --syncdeps \
+                  --noconfirm
               "
             '
 
-      - name: Show package
+      - name: Find Arch package
         run: |
+          echo "Built packages:"
+
           find . -type f \
             \( -name "*.pkg.tar.zst" -o -name "*.pkg.tar.xz" \) \
             -print
