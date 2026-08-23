@@ -1,0 +1,57 @@
+name: DOPS AUR Builder
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "AUR package name"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout DOPS
+        uses: actions/checkout@v4
+
+      - name: Install Arch build environment
+        run: |
+          docker pull archlinux:latest
+
+      - name: Build AUR package
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          docker run --rm \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            archlinux:latest \
+            bash -c '
+              set -e
+
+              pacman -Sy --noconfirm \
+                base-devel \
+                git \
+                sudo
+
+              useradd -m builder
+              printf "builder ALL=(ALL) NOPASSWD: ALL\n" \
+                > /etc/sudoers.d/builder
+
+              chown -R builder:builder /workspace
+
+              su - builder -c "
+                cd /workspace
+                git clone https://aur.archlinux.org/${PACKAGE}.git aur-package
+                cd aur-package
+                makepkg --syncdeps --noconfirm
+              "
+            '
+
+      - name: Show package
+        run: |
+          find . -type f \
+            \( -name "*.pkg.tar.zst" -o -name "*.pkg.tar.xz" \) \
+            -print
