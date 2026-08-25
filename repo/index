@@ -1,0 +1,7 @@
+bash|5.3|http://10.0.2.2:8000/bash-5.3.tar.gz|222cb563ba3206e29e3308ac012104d20a2214fcceefb42ba286ddcbf76d94b8|
+cycle-a|1.0.0|http://10.0.2.2:8000/cycle-a-1.0.0.tar.gz|56704eeff7dd5e98f8aaf28e2df194cb15c22ade12750c5320ea07e78948328a|
+cycle-b|1.0.0|http://10.0.2.2:8000/cycle-b-1.0.0.tar.gz|26a544ab59e3be91597e327e4218e271b776ede08bd263fbaace9fe4fa923e4f|
+hello-app|1.0.0|http://10.0.2.2:8000/hello-app-1.0.0.tar.gz|4f663a8bf3e98d6fed4bb4301ff2081170bf08498301f0487ef9fda51dbd03d5|
+hello-dops|1.1.0|http://10.0.2.2:8000/hello-dops-1.1.0.tar.gz|0a9bcfdd7c04abe6bff28aa68a48e4665e01780b8bc822d22a508b85d0e3fd4c|
+nano|8.7|http://10.0.2.2:8000/nano-8.7.tar.gz|f4bee7628cdf51a42e2ae813d73c7819e7566ac6c70a1552b329735d9c334ba6|
+neofetch|7.1.0|http://10.0.2.2:8000/neofetch-7.1.0.tar.gz|2eee7c28ca5b5735689529a1c76dc0cc82a392b6d706cfa2d081106a34617fef|bash
